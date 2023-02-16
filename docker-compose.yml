@@ -1,0 +1,16 @@
+version: '3'
+
+services:
+  notebook-r:
+    image: 'jupyter/r-notebook'
+    ports:
+      - '8117:8117'
+    volumes:
+      - './work:/home/sanpo/work'
+    environment:
+      - 'JUPYTER_PORT=8117'
+      - 'NB_USER=sanpo'
+      - 'CHOWN_HOME=yes'
+    user: 'root'
+    working_dir: '/home/sanpo/work'
+    restart: 'always'
