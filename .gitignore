@@ -1,0 +1,8 @@
+## Mac
+.DS_Store
+
+## R jupyter lab
+.ipynb_checkpoints
+
+## Assets
+/work/assets/
