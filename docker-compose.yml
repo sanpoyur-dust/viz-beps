@@ -14,3 +14,19 @@ services:
     user: 'root'
     working_dir: '/home/sanpo/work'
     restart: 'always'
+
+  db:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: "madison"
+    volumes:
+      - ./data:/var/lib/postgresql/data
+    ports:
+      - 9432:5432
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 9000:8080
