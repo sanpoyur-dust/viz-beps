@@ -4,5 +4,9 @@
 ## R jupyter lab
 .ipynb_checkpoints
 
-## Assets
+## Volumes
+/data/
 /work/assets/
+
+## Python venv
+venv/
