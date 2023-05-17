@@ -18,7 +18,7 @@ col_to_ty = {
     "n_deleted": "INTEGER",
     "n_inserted": "INTEGER",
     "n_mutated": "INTEGER",
-    "reads": "NUMERIC"
+    "reads": "NUMERIC",
 }
 col_to_ix = dict.fromkeys(col_to_ty.keys())
 keys = ", ".join(col_to_ix.keys())
@@ -28,8 +28,8 @@ def create_table(cur):
     schema = ", ".join([f"{col} {ty}" for col, ty in col_to_ty.items()])
     cur.execute(f"DROP TABLE IF EXISTS k562;")
     cur.execute(f"CREATE TABLE k562(id BIGSERIAL PRIMARY KEY, {schema});")
-    
-    
+
+
 def insert_data(cur):
     def normalize_data(data, ty):
         data = data.strip()
@@ -40,20 +40,24 @@ def insert_data(cur):
             return f"'{data}'"
         elif ty == "CHARACTER ARRAY":
             data = data.replace("[", "").replace("]", "")
-            data = "{" + (", ".join([chr(int(e)) for e in data.split(" ")]) if data else "") + "}"
+            data = (
+                "{"
+                + (", ".join([chr(int(e)) for e in data.split(" ")]) if data else "")
+                + "}"
+            )
             return f"'{data}'"
         else:
             return data
-    
+
     with open("assets/alleleTables/K562-alleleTable.txt", "r") as f:
-        cols = f.readline().strip().split("\t")            
+        cols = f.readline().strip().split("\t")
         for ix, col in enumerate(cols):
             col = col.lower().replace("%", "")
             if col in col_to_ix:
                 col_to_ix[col] = ix
-                
+
         ty_and_ix = list(zip(col_to_ty.values(), col_to_ix.values()))
-        
+
         for line in f:
             cols = line.strip().split("\t")
             values = ", ".join([normalize_data(cols[ix], ty) for ty, ix in ty_and_ix])
@@ -72,4 +76,3 @@ if __name__ == "__main__":
         cur = con.cursor()
         create_table(cur)
         insert_data(cur)
-        
