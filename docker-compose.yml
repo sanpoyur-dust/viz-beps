@@ -24,6 +24,7 @@ services:
       - ./data:/var/lib/postgresql/data
     ports:
       - 9432:5432
+    shm_size: 1g
 
   adminer:
     image: adminer
