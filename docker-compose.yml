@@ -11,6 +11,7 @@ services:
       - 'JUPYTER_PORT=8117'
       - 'NB_USER=sanpo'
       - 'CHOWN_HOME=yes'
+      - 'JUPYTER_TOKEN=madison'
     user: 'root'
     working_dir: '/home/sanpo/work'
     restart: 'always'

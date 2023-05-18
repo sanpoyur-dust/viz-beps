@@ -160,3 +160,42 @@ FROM k562_diff
 INNER JOIN k562
 USING (id)
 WHERE k562_diff.propdiff >= 0.1;
+
+CREATE OR REPLACE FUNCTION k562_sum_substs_by(
+  current_sample TEXT,
+  current_is_positive BOOLEAN
+) RETURNS TABLE(
+  propsum NUMERIC,
+  substitution_position INTEGER,
+  substitution_value CHARACTER
+) AS
+$$
+WITH filtered AS (
+  SELECT
+  k562_diff_substs.propdiff,
+  unnested.substitution_position,
+  unnested.substitution_value
+  FROM
+  k562_diff_substs
+  INNER JOIN map_strand USING (guideid),
+  UNNEST(
+    k562_diff_substs.substitution_positions,
+    k562_diff_substs.substitution_values
+  ) AS unnested (substitution_position, substitution_value)
+  WHERE
+  k562_diff_substs.sample = current_sample AND
+  map_strand.is_positive = current_is_positive AND
+  NOT EXISTS (
+    SELECT 1 FROM map_nontarget
+    WHERE k562_diff_substs.guideid = map_nontarget.guideid
+  )
+)
+SELECT
+SUM(filtered.propdiff) / 100 AS propsum,
+filtered.substitution_position,
+filtered.substitution_value
+FROM filtered
+GROUP BY filtered.substitution_position, filtered.substitution_value;
+$$
+LANGUAGE SQL
+STABLE;
